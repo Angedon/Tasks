@@ -1,0 +1,236 @@
+// шахматы
+import java.util.Scanner;
+import java.lang.Math;
+
+public class Main
+{
+    static abstract class Piece{
+        String stringField;
+        int x, y;
+        Piece(String stringField, int x, int y){
+            this.x = x;
+            this.y = y;
+            this.stringField = stringField;
+        }
+        public abstract boolean checkIfHit();
+        public abstract boolean checkDiagonal();
+        public abstract boolean checkLine();
+    } 
+    static class Queen extends Piece{
+        
+        Queen(String stringField, int x, int y){
+            super(stringField, x, y);
+        }
+        
+        public boolean checkDiagonal(){
+            int xPoint = 0, yPoint = 0;
+            for(int dx = -1; dx < 2; dx+=2){
+                for(int dy = -1; dy < 2; dy+=2){
+                    xPoint = x + dx;
+                    yPoint = y + dy;
+                    while(xPoint >= 0 && xPoint <= 3 && yPoint >= 0 && yPoint <= 3){
+                        if(stringField.charAt(xPoint + 4 * yPoint) == 'K'){
+                            return true;
+                        }
+                        if(stringField.charAt(xPoint + 4 * yPoint) != '_') break;
+                        xPoint += dx;
+                        yPoint += dy;
+                    }
+                }
+            }
+            return false;
+        } 
+   
+        public boolean checkLine(){
+            int xPoint = x, yPoint = y;
+            for(int dx = -1; dx < 2; dx+=2){
+                xPoint = x + dx;
+                while(xPoint >= 0 && xPoint <= 3){
+                    if(stringField.charAt(xPoint + 4 * yPoint) == 'K'){
+                        return true;
+                    }
+                    if(stringField.charAt(xPoint + 4 * yPoint) != '_') break;
+                    xPoint += dx;
+                }
+            }
+            xPoint = x; 
+            for(int dy = -1; dy < 2; dy+=2){
+                yPoint = y + dy;
+                while(yPoint >= 0 && yPoint <= 3){
+                    if(stringField.charAt(xPoint + 4 * yPoint) == 'K'){
+                        return true;
+                    }
+                    if(stringField.charAt(xPoint + 4 * yPoint) != '_') break;
+                    yPoint += dy;
+                }
+            }
+            return false;
+        } 
+        @Override
+        public boolean checkIfHit(){
+            return checkLine() || checkDiagonal();
+        } 
+    }
+    static class Rook extends Piece{
+        
+        Rook(String stringField, int x, int y){
+            super(stringField, x, y);
+        }
+        
+        public boolean checkLine(){
+            int xPoint = x, yPoint = y;
+            for(int dx = -1; dx < 2; dx+=2){
+                xPoint = x + dx;
+                while(xPoint >= 0 && xPoint <= 3){
+                    if(stringField.charAt(xPoint + 4 * yPoint) == 'K'){
+                        return true;
+                    }
+                    if(stringField.charAt(xPoint + 4 * yPoint) != '_') break;
+                    xPoint += dx;
+                }
+            }
+            xPoint = x;
+            for(int dy = -1; dy < 2; dy+=2){
+                yPoint = y + dy;
+                while(yPoint >= 0 && yPoint <= 3){
+                    if(stringField.charAt(xPoint + 4 * yPoint) == 'K'){
+                        return true;
+                    }
+                    if(stringField.charAt(xPoint + 4 * yPoint) != '_') break;
+                    yPoint += dy;
+                }
+            }
+            return false;
+        } 
+        @Override
+        public boolean checkIfHit(){
+            return checkLine();
+        } 
+    }
+    static class Pawn extends Piece{
+ 
+        Pawn(String stringField, int x, int y){
+            super(stringField, x, y);
+        }
+ 
+        public boolean checkDiagonal(){
+            if(x > 0 && y > 0){
+                if(stringField.charAt(x - 1 + 4 * (y - 1)) == 'K'){
+                    return true;
+                }
+            }
+            if(x < 3 && y > 0){
+                if(stringField.charAt(x + 1 + 4 * (y - 1)) == 'K'){
+                    return true;
+                }
+            }
+            return false;
+        } 
+        @Override
+        public boolean checkIfHit(){
+            return checkDiagonal();
+        } 
+    }
+    static class Officer extends Piece{
+        
+        Officer(String stringField, int x, int y){
+            super(stringField, x, y);
+        }
+        
+        public boolean checkDiagonal(){
+            int xPoint = x, yPoint = y;
+            for(int dx = -1; dx < 2; dx+=2){
+                for(int dy = -1; dy < 2; dy+=2){
+                    xPoint = x + dx;
+                    yPoint = y + dy;
+                    while(xPoint >= 0 && xPoint <= 3 && yPoint >= 0 && yPoint <= 3){
+                        if(stringField.charAt(xPoint + 4 * yPoint) == 'K'){
+                            return true;
+                        }
+                        if(stringField.charAt(xPoint + 4 * yPoint) != '_') break;
+                        xPoint += dx;
+                        yPoint += dy;
+                    }
+                }
+            }
+            return false;
+        } 
+        @Override
+        public boolean checkIfHit(){
+            return checkDiagonal();  
+        }
+    }
+    static class Horse extends Piece{
+        
+        Horse(String stringField, int x, int y){
+            super(stringField, x, y);
+        }
+        
+        public boolean checkPositions(){
+            for(int dx = -2; dx < 3; dx++){
+                for(int dy = -2; dy < 3; dy++){
+                    if(dx == 0 || dy == 0) continue;
+                    if(x + dx < 0 || x + dx > 3 || y + dy < 0 || y + dy > 3){
+                        continue;
+                    }
+                    if((Math.abs(dx) + Math.abs(dy) == 3) && (stringField.charAt(x + dx + 4 * (y + dy)) == 'K')){
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        @Override
+        public boolean checkIfHit(){
+            return checkPositions(); 
+        }
+    }
+    
+    public static boolean checkIfShah(String stringField){
+        int stringLength = stringField.length();
+		for(int i = 0; i < stringLength; i++){
+		    if(stringField.charAt(i) == 'P'){
+		        Pawn pawn = new Pawn(stringField, i % 4, i / 4);
+		        if(pawn.checkIfHit()){
+		            return true;
+		        }
+		    }
+		    else if(stringField.charAt(i) == 'R'){
+		        Rook rook = new Rook(stringField, i % 4, i / 4);
+		        if(rook.checkIfHit()){
+		            //System.out.println("Rook");
+		            return true;
+		        }
+		    }
+		    else if(stringField.charAt(i) == 'N'){
+		        Horse horse = new Horse(stringField, i % 4, i / 4);
+		        if(horse.checkIfHit()){
+		            return true;
+		        }
+		    }
+		    else if(stringField.charAt(i) == 'B'){
+		        Officer officer = new Officer(stringField, i % 4, i / 4);
+		        if(officer.checkIfHit()){
+		            return true;
+		        }
+		    }
+		    else if(stringField.charAt(i) == 'Q'){
+		        Queen queen = new Queen(stringField, i % 4, i / 4);
+		        if(queen.checkIfHit()){
+		            return true;
+		        }
+		    }
+		}
+		return false;
+    }
+    
+	public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
+        
+        // Стандартно считаем, что x - это столбец, y - это строка, обычно такие координаты на экране
+        // То есть с левого верхнего угла y увеличивается вниз, x увеличивается вправо
+		
+        String stringField = in.next();
+		System.out.println(checkIfShah(stringField));
+	}
+}
