@@ -1,0 +1,112 @@
+// Болотник, леший и тд
+import java.util.Scanner;
+
+public class Main
+{
+    interface Creature{
+        public int[][] getField(String stringField);
+    }
+    static class Swamper implements Creature{
+        @Override
+        public int[][] getField(String stringField){
+            int stringSize = stringField.length();
+            int field[][] = new int[4][4];
+            for(int i = 0; i < stringSize; i++){
+                if(stringField.charAt(i) == 'W'){
+                    field[i / 4][i % 4] = 2;
+                }
+                else if(stringField.charAt(i) == 'T'){
+                    field[i / 4][i % 4] = 5;
+                }
+                else if(stringField.charAt(i) == 'P'){
+                    field[i / 4][i % 4] = 2;
+                }
+                else if(stringField.charAt(i) == 'S'){
+                    field[i / 4][i % 4] = 2;
+                }
+            }
+            return field;
+        }
+    }
+    static class Human implements Creature{
+        @Override
+        public int[][] getField(String stringField){
+            int stringSize = stringField.length();
+            int field[][] = new int[4][4];
+            for(int i = 0; i < stringSize; i++){
+                if(stringField.charAt(i) == 'W'){
+                    field[i / 4][i % 4] = 2;
+                }
+                else if(stringField.charAt(i) == 'T'){
+                    field[i / 4][i % 4] = 3;
+                }
+                else if(stringField.charAt(i) == 'P'){
+                    field[i / 4][i % 4] = 1;
+                }
+                else if(stringField.charAt(i) == 'S'){
+                    field[i / 4][i % 4] = 5;
+                }
+            }
+            return field;
+        }
+    }
+    static class Woodman implements Creature{
+        @Override
+        public int[][] getField(String stringField){
+            int stringSize = stringField.length();
+            int field[][] = new int[4][4];
+            for(int i = 0; i < stringSize; i++){
+                if(stringField.charAt(i) == 'W'){
+                    field[i / 4][i % 4] = 3;
+                }
+                else if(stringField.charAt(i) == 'T'){
+                    field[i / 4][i % 4] = 2;
+                }
+                else if(stringField.charAt(i) == 'P'){
+                    field[i / 4][i % 4] = 2;
+                }
+                else if(stringField.charAt(i) == 'S'){
+                    field[i / 4][i % 4] = 3;
+                }
+            }
+            return field;
+        }
+    }
+    
+    public static int getShortestWay(int field[][], int shortestWays[][], int n, int m){
+        if(n == 0 && m == 0){
+            return 0;
+        }
+        else{
+            int leftWay = 100, upWay = 100;
+            if(n-1 >= 0){
+                upWay = getShortestWay(field, shortestWays, n-1, m);
+            }
+            if(m-1 >= 0){
+                leftWay = getShortestWay(field, shortestWays, n, m-1);
+            }
+            
+            shortestWays[n][m] = field[n][m] + (leftWay < upWay ? leftWay : upWay);
+        }
+        return shortestWays[n][m];
+    }
+
+	public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
+		String stringField = in.next();
+		String creature = in.next();
+		int shortestWays[][] = new int[4][4];
+		if(creature.equals("Human")){
+		    Human human = new Human();
+		    System.out.println(getShortestWay(human.getField(stringField), shortestWays, 3, 3));
+		}
+		else if(creature.equals("Swamper")){
+		    Swamper swamper = new Swamper();
+		    System.out.println(getShortestWay(swamper.getField(stringField), shortestWays, 3, 3));
+		}
+		else if(creature.equals("Woodman")){
+		    Woodman woodman = new Woodman();
+		    System.out.println(getShortestWay(woodman.getField(stringField), shortestWays, 3, 3));
+		}
+	}
+}
