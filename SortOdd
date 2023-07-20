@@ -1,0 +1,42 @@
+\\ Сортировка нечетных
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.stream.Collectors;
+
+public class Main
+{
+    public static void sortOddNumbers(ArrayList<Integer> numbers){
+        ArrayList<Integer> oddNumbers = new ArrayList<Integer>();
+        int N = numbers.size(), j = 0;
+        for(int i = 0; i < N; i++){
+            if(numbers.get(i) % 2 != 0){
+                oddNumbers.add(numbers.get(i));
+            }
+        }
+        Comparator<Integer> comparator = new Comparator<Integer>(){
+            public int compare(Integer number1, Integer number2) {
+                return number1.compareTo(number2);
+            }
+        };
+        oddNumbers.sort(comparator);
+        for(int i = 0; i < N; i++){
+            if(numbers.get(i) % 2 != 0){
+                numbers.set(i, oddNumbers.get(j));
+                j++;
+            }
+        }
+    }
+	public static void main(String[] args) {
+	    Scanner in = new Scanner(System.in);
+	    String input = in.nextLine();
+		ArrayList<Integer> numbers = new ArrayList<Integer>();
+		for(String number : input.split(" ")){
+		    numbers.add(Integer.parseInt(number));
+		}
+		sortOddNumbers(numbers);
+		int N = numbers.size();
+		System.out.println(numbers.stream().map(Object::toString)
+                        .collect(Collectors.joining(" ")));
+	}
+}
