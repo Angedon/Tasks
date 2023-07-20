@@ -1,0 +1,40 @@
+\\ Римские числа
+import java.util.Scanner;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+public class Main
+{
+    public static String getRomanNumber(int arabicNumber){
+        Map<Integer, String> arabicToRomanSymbols = new LinkedHashMap<Integer, String>(); 
+        arabicToRomanSymbols.put(1000, "M");
+        arabicToRomanSymbols.put(900, "CM");
+        arabicToRomanSymbols.put(500, "D");
+        arabicToRomanSymbols.put(400, "CD");
+        arabicToRomanSymbols.put(100, "C");
+        arabicToRomanSymbols.put(1000, "M");
+        arabicToRomanSymbols.put(90, "XC");
+        arabicToRomanSymbols.put(50, "L");
+        arabicToRomanSymbols.put(40, "XL");
+        arabicToRomanSymbols.put(10, "X");
+        arabicToRomanSymbols.put(9, "IX");
+        arabicToRomanSymbols.put(5, "V");
+        arabicToRomanSymbols.put(4, "IV");
+        arabicToRomanSymbols.put(1, "I");
+        String romanNumber = ""; 
+        while(arabicNumber > 0){
+            for(int arabicKey : arabicToRomanSymbols.keySet()){
+                while(arabicNumber >= arabicKey){
+                    romanNumber += arabicToRomanSymbols.get(arabicKey);
+                    arabicNumber -= arabicKey;
+                }
+            }
+        }
+        return romanNumber;
+    }
+	public static void main(String[] args) {
+	    Scanner in = new Scanner(System.in);
+	    int arabicNumber = in.nextInt();
+		System.out.println(getRomanNumber(arabicNumber));
+	}
+}
