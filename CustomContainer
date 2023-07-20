@@ -1,0 +1,217 @@
+#include<iostream>
+#include<string>
+#include<memory>
+#include<iterator>
+
+template<typename T>
+class Container
+{
+private:
+	T* value;
+	int n, len;
+public:
+
+	struct Iterator
+	{
+	public:
+		using iterator_category = std::forward_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+		using value_type = T;
+		using pointer = T*;  // or also value_type*
+		using reference = T&;  // or also value_type&
+		pointer m_ptr;
+
+		Iterator(pointer ptr) : m_ptr(ptr) {}
+
+		reference operator*() const
+		{
+			return *m_ptr;
+		}
+		pointer operator->()
+		{
+			return m_ptr;
+		}
+		Iterator& operator++()
+		{
+			m_ptr++;
+			return *this;
+		}
+		friend bool operator == (const Iterator& a, const Iterator& b)
+		{
+			return a.m_ptr == b.m_ptr;
+		}
+		friend bool operator != (const Iterator& a, const Iterator& b)
+		{
+			return a.m_ptr != b.m_ptr;
+		}
+	};
+
+	Iterator begin()
+	{
+		return Iterator(&value[0]);
+	}
+
+	Iterator end()
+	{
+		return Iterator(&value[len]);
+	}
+
+	Container()
+	{
+		value = new T[1];
+		n = 1;
+		len = 0;
+	}
+
+	Container(T*& values, int N)
+	{
+		len = N;
+		n = 2*N;
+		value = new T[n];
+		std::cout << "Constructor!" << std::endl;
+		std::cout << std::endl;
+		for (int i = 0; i < len; ++i)
+		{
+			value[i] = values[i];
+			std::cout << values[i] << " " << value[i] << std::endl;
+		}
+	}
+
+	bool empty() const 
+	{
+		return len == 0;
+	}
+
+	int length() const
+	{
+		return len;
+	}
+
+	int getN() const
+	{
+		return n;
+	}
+
+	int setN(int const & n)
+	{
+		return this->n = n;
+	}
+
+	void pushFront(const T& element)
+	{
+		len++;
+		if (getN() <= len) {
+			n *= 2;
+		}
+		T* buffer = new T[n];
+		buffer[0] = element;
+		for (int i = 1; i < len; ++i)
+		{
+			buffer[i] = this->value[i-1];
+		}
+		delete value;
+		value = buffer;
+	}
+
+	void pushBack(const T& element)
+	{
+		len++;
+		if (getN() <= len) {
+			n *= 2;
+			T* buffer = new T[n];
+			for (int i = 0; i < len-1; ++i)
+			{
+				buffer[i] = this->value[i];
+			}
+			buffer[len - 1] = element;
+			delete value;
+			value = buffer;
+		}
+		else {
+			value[len - 1] = element;
+		}
+	}
+
+	T front() const 
+	{
+		return value[0];
+	}
+
+	T back() const
+	{
+		return value[len-1];
+	}
+
+	bool fill(Container<T>& container) 
+	{
+		if (container.length() == 0) return false;
+		delete value;
+		n = 1;
+		len = 0;
+		value = new T[n];
+		std::cout << "Elements!" << std::endl;
+		for (auto element : container) {
+			std::cout << element << std::endl;
+			this->pushBack(element);
+		}
+		return true;
+	}
+
+	bool reverse() 
+	{
+		if (len == 0) return false;
+		for (int i = 0; i < len/2; ++i) {
+			T buffer = value[len - i];
+			value[len - i] = value[i];
+			value[i] = buffer;
+		}
+		return true;
+	}
+
+	void print() const
+	{
+		for (int i = 0; i < len; ++i) std::cout << value[i] << " ";
+		std::cout << std::endl;
+	}
+
+	void clear() 
+	{
+		len = n = 0;
+		delete value;
+	}
+
+	~Container()
+	{
+		delete value;
+	}
+};
+
+/*
+int main()
+{
+	/*std::string s[] = {"rok", "wolf", "drop"};
+	Container<std::string> arr(s, 3);
+	arr.addToStart("pop");
+	arr.addToStart("klasa");
+	arr.addToEnd("memento");
+	arr.print();
+	int* arr = new int[10];
+	for (int i = 0; i < 10; ++i) arr[i] = i;
+	Container<int> container = Container<int>(arr, 10);
+
+	for (int i = 10; i < 30; ++i) container.pushFront(i);
+
+	for (int i = 30; i < 50; ++i) container.pushBack(i);
+
+	container.print();
+
+	int* brr = new int[11];
+	for (int i = 0; i < 11; ++i) { brr[i] = i+100; std::cout << brr[i] << " "; }
+	Container<int> buff = Container<int>(brr, 11);
+	buff.print();
+	container.fill(buff);
+	container.print();
+	delete arr, brr;
+	system("pause");
+}
+*/
